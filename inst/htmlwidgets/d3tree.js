@@ -102,7 +102,7 @@ HTMLWidgets.widget({
             .append("g")
             .attr("class", "cell parent")
             .on("click", function(d) {
-                zoom(d, celltext);
+                zoom(d, id, celltext);
             })
             .append("svg")
             .attr("class", "clip")
@@ -161,7 +161,7 @@ HTMLWidgets.widget({
             .append("g")
             .attr("class", "cell child")
             .on("click", function(d) {
-                zoom(node === d.parent ? root : d.parent, celltext);
+                zoom(node === d.parent ? root : d.parent, id, celltext);
             })
             .on("mouseover", function() {
                 this.parentNode.appendChild(this); // workaround for bringing elements to the front (ie z-index)
@@ -235,10 +235,10 @@ HTMLWidgets.widget({
             console.log("select zoom(node)");
             treemap.value(this.value == "size" ? size : count)
                 .nodes(root);
-            zoom(node, celltext);
+            zoom(node, id, celltext);
         });
 
-        zoom(node,celltext);
+        zoom(node, id, celltext);
     };
 
 
@@ -279,7 +279,8 @@ HTMLWidgets.widget({
     }
 
 
-    function zoom(d, celltext) {
+    function zoom(d, id, celltext) {
+        id ? id : "id";
         celltext ? celltext : "name";
         treemap
             .padding([headerHeight / (chartHeight / d.dy), 0, 0, 0])
