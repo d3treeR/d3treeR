@@ -27,7 +27,9 @@ Description: Make interactive d3.js treemaps in R with the convenience and infra
 License: MIT + file LICENSE
 LazyData: TRUE
 Imports:
-  htmlwidgets
+  data.tree,
+  htmlwidgets,
+  treemap
 Suggests:
   knitr
 VignetteBuilder: knitr

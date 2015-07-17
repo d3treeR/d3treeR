@@ -5,11 +5,31 @@
 #' @import htmlwidgets
 #'
 #' @export
-d3tree <- function(data = NULL, width = NULL, height = NULL) {
+d3tree <- function(data = NULL, rootname = NULL, width = NULL, height = NULL) {
+
+  meta = NULL
+
+  # accept treemap
+  if( inherits(data,"list" ) && names(data)[1] == "tm" ){
+    meta = data[-1]
+    data = convert_treemap(
+      data$tm
+      , ifelse(!is.null(rootname),rootname,deparse(substitute(data)))
+    )
+  }
+
+  # accept data.frame
+
+  # accept data.tree
+
+  # accept JSON string
+
+  # accept list
 
   # forward options using x
   x = list(
     data = data
+    ,metat = meta
   )
 
   # create widget

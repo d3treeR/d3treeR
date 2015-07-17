@@ -179,7 +179,7 @@ HTMLWidgets.widget({
         childEnterTransition.append("rect")
             .classed("background", true)
             .style("fill", function(d) {
-                return color(d.parent.name);
+                return d.color ? d.color :  color(d.parent.name);
             });
         childEnterTransition.append('text')
             .attr("class", "label")
@@ -209,7 +209,7 @@ HTMLWidgets.widget({
                 return d.dy;
             })
             .style("fill", function(d) {
-                return color(d.parent.name);
+                return d.color ? d.color : color(d.parent.name);
             });
         childUpdateTransition.select(".label")
             .attr('x', function(d) {
@@ -312,7 +312,7 @@ HTMLWidgets.widget({
                         .select(".label")
                         .style("display", "")
                         .style("fill", function(d) {
-                            return idealTextColor(color(d.parent.name));
+                            return idealTextColor(d.color ? d.color : color(d.parent.name));
                         });
                 }
             });
@@ -352,7 +352,7 @@ HTMLWidgets.widget({
                 return d.children ? headerHeight : Math.max(0.01, (ky * d.dy));
             })
             .style("fill", function(d) {
-                return d.children ? headerColor : color(d.parent.name);
+                return d.children ? headerColor : ( d.color ? d.color : color(d.parent.name) );
             });
 
         node = d;
