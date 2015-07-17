@@ -29,6 +29,7 @@ LazyData: TRUE
 Imports:
   data.tree,
   htmlwidgets,
+  jsonlite,
   treemap
 Suggests:
   knitr

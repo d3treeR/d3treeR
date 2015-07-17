@@ -78,9 +78,11 @@ HTMLWidgets.widget({
         .attr("in2", "blurOut")
         .attr("mode", "normal");
 
-    drawTree( x.data );
+    drawTree( x.data, x.options.id, x.options.celltext );
 
-    function drawTree(data) {
+    function drawTree( data, id, celltext ) {
+        id ? id : "id";
+        celltext ? celltext : "name";
         node = root = data;
         var nodes = treemap.nodes(root);
 
@@ -94,7 +96,7 @@ HTMLWidgets.widget({
         // create parent cells
         var parentCells = chart.selectAll("g.cell.parent")
             .data(parents, function(d) {
-                return "p-" + d.id;
+                return "p-" + d[id];
             });
         var parentEnterTransition = parentCells.enter()
             .append("g")
@@ -122,7 +124,7 @@ HTMLWidgets.widget({
             })
             .attr("height", headerHeight)
             .text(function(d) {
-                return d.name;
+                return d[celltext];
             });
         // update transition
         var parentUpdateTransition = parentCells.transition().duration(transitionDuration);
@@ -143,7 +145,7 @@ HTMLWidgets.widget({
             })
             .attr("height", headerHeight)
             .text(function(d) {
-                return d.name;
+                return d[celltext];
             });
         // remove transition
         parentCells.exit()
@@ -152,7 +154,7 @@ HTMLWidgets.widget({
         // create children cells
         var childrenCells = chart.selectAll("g.cell.child")
             .data(children, function(d) {
-                return "c-" + d.id;
+                return "c-" + d[id];
             });
         // enter transition
         var childEnterTransition = childrenCells.enter()
@@ -169,7 +171,7 @@ HTMLWidgets.widget({
                     .style("stroke", "#000000");
             })
             .on("mouseout", function() {
-                d3.select(this)
+              d3.select(this)
                     .attr("filter", "")
                     .select(".background")
                     .style("stroke", "#FFFFFF");
@@ -179,7 +181,7 @@ HTMLWidgets.widget({
         childEnterTransition.append("rect")
             .classed("background", true)
             .style("fill", function(d) {
-                return d.color ? d.color :  color(d.parent.name);
+                return d.color ? d.color :  color(d.parent[id]);
             });
         childEnterTransition.append('text')
             .attr("class", "label")
@@ -193,7 +195,7 @@ HTMLWidgets.widget({
             .attr("text-anchor", "middle")
             .style("display", "none")
             .text(function(d) {
-                return d.name;
+                return d[celltext];
             });
         // update transition
         var childUpdateTransition = childrenCells.transition().duration(transitionDuration);
@@ -209,7 +211,7 @@ HTMLWidgets.widget({
                 return d.dy;
             })
             .style("fill", function(d) {
-                return d.color ? d.color : color(d.parent.name);
+                return d.color ? d.color : color(d.parent[id]);
             });
         childUpdateTransition.select(".label")
             .attr('x', function(d) {
@@ -222,7 +224,7 @@ HTMLWidgets.widget({
             .attr("text-anchor", "middle")
             .style("display", "none")
             .text(function(d) {
-                return d.name;
+                return d[celltext];
             });
 
         // exit transition
@@ -312,7 +314,7 @@ HTMLWidgets.widget({
                         .select(".label")
                         .style("display", "")
                         .style("fill", function(d) {
-                            return idealTextColor(d.color ? d.color : color(d.parent.name));
+                            return idealTextColor(d.color ? d.color : color(d.parent[id]));
                         });
                 }
             });
@@ -332,8 +334,8 @@ HTMLWidgets.widget({
             .attr("height", function(d) {
                 return d.children ? headerHeight : Math.max(0.01, (ky * d.dy));
             })
-            .text(function(d) {
-                return d.name;
+        .text(function(d) {
+                return d[celltext];
             });
 
         zoomTransition.select(".child .label")
@@ -352,7 +354,7 @@ HTMLWidgets.widget({
                 return d.children ? headerHeight : Math.max(0.01, (ky * d.dy));
             })
             .style("fill", function(d) {
-                return d.children ? headerColor : ( d.color ? d.color : color(d.parent.name) );
+                return d.children ? headerColor : ( d.color ? d.color : color(d.parent[id]) );
             });
 
         node = d;

@@ -1,11 +1,35 @@
-#' <Add Title>
+#' Create an Interactive Treemap
 #'
-#' <Add Description>
+#' \code{d3tree} is the primary function for creating interactive d3.js treemaps from
+#' various data types in R.  Easily use \code{\link[treemap]{treemap}} plots customized with
+#' \code{treemap}, or supply a \code{list} for a more typical \code{d3.js} experience, or
+#' blend the two.
 #'
-#' @import htmlwidgets
+#' @param data the data to be plotted as either
+#'           the result of \code{\link[treemap]{treemap}} or
+#'           a \code{list} or \code{JSON} as \code{character} or \code{file}
+#'           in the form of a \code{d3.js} hierarchy.
+#' @param rootname \code{character} for the name of the root if \code{data} is a
+#'           \code{treemap} object.
+#' @param id \code{character} of the name or id.  The default is \code{"id"}.  Often
+#'           \code{d3.js} hierarchies will use \code{"name"} instead of \code{"id"}.  We will use
+#'           \code{id} as the default to allow nodes with non-unique names.
+#' @param celltext \code{character} of the field that contains the title for each cell.  The
+#'           default is \code{"name"}.
+#' @param width, height a valid \code{CSS} size for the width and height of the container.
+#'           Percentage values work also by supplying as \code{character} such as \code{width = "100\%"}
+#'
+#' @importFrom jsonlite fromJSON toJSON
 #'
 #' @export
-d3tree <- function(data = NULL, rootname = NULL, width = NULL, height = NULL) {
+d3tree <- function(
+              data = NULL
+              , rootname = NULL
+              , id = "id"
+              , celltext = "name"
+              , width = NULL
+              , height = NULL
+          ) {
 
   meta = NULL
 
@@ -23,13 +47,26 @@ d3tree <- function(data = NULL, rootname = NULL, width = NULL, height = NULL) {
   # accept data.tree
 
   # accept JSON string
+  if( inherits(data,c("character","connection")) ){
+    data = jsonlite::toJSON(
+      jsonlite::fromJSON( pt )
+      , auto_unbox = TRUE
+      , dataframe = "rows"
+    )
+  }
+
 
   # accept list
+  #  here we shouldn't need to do anything
 
   # forward options using x
   x = list(
     data = data
     ,meta = meta
+    ,options = list(
+      id = id
+      ,celltext = celltext
+    )
   )
 
   # create widget

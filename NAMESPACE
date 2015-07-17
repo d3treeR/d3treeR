@@ -3,4 +3,6 @@
 export(d3tree)
 export(d3treeOutput)
 export(renderD3tree)
-import(htmlwidgets)
+import(data.tree)
+importFrom(jsonlite,fromJSON)
+importFrom(jsonlite,toJSON)
