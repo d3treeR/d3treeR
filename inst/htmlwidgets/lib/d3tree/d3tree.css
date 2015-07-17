@@ -8,36 +8,23 @@
     stroke: #EEEEEE;
 }
 
-.d3tree .chart {
-    display: block;
-    margin: auto;
-}
-
-.d3tree .chart .parent .label {
-    color: #FFFFFF;
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
-    -webkit-text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
-    -moz-text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
-}
-
-.d3tree .labelbody {
-    background: transparent;
-}
-
 .d3tree .label {
+    stroke: #000000;
+    fill: #000000;
+    stroke-width: 0;
     margin: 2px;
-    white-space: pre;
     overflow: hidden;
     text-overflow: ellipsis;
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
-    -webkit-text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
-    -moz-text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+.d3tree .parent .label {
+    font-size: 12px;
+    stroke: #FFFFFF;
+    fill: #FFFFFF;
 }
 
 .d3tree .child .label {
-    white-space: pre-wrap;
-    text-align: center;
-    text-overflow: ellipsis;
+    font-size: 11px;
 }
 
 .d3tree .cell {
