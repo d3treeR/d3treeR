@@ -1,10 +1,33 @@
 Package: d3treeR
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Make Interactive Treemaps
 Version: 0.1
 Date: 2015-07-17
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Authors@R: c(
+      person(
+        "Mike", "Bostock"
+        , role = c("aut", "cph")
+        , comment = "d3.js library in htmlwidgets/lib, http://d3js.org"
+      ),
+      person(
+        "Bill", "White"
+        , role = c("aut", "cph")
+        , comment = "treemap code, http://www.billdwhite.com/wordpress/2012/12/16/d3-treemap-with-title-headers/"
+      ),
+      person(
+        "Kent", "Russell"
+        , role = c("aut", "cre")
+        , comment = "R interface"
+        , email = "kent.russell@timelyportfolio.com"
+      )
+    )
+Maintainer: Kent Russell <kent.russell@timelyportfolio.com>
+Description: Make interactive d3.js treemaps in R with the convenience and infrastructure
+              of an htmlwidget.
+License: MIT + file LICENSE
 LazyData: TRUE
+Imports:
+  htmlwidgets
+Suggests:
+  knitr
+VignetteBuilder: knitr
