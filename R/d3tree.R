@@ -29,7 +29,7 @@ d3tree <- function(data = NULL, rootname = NULL, width = NULL, height = NULL) {
   # forward options using x
   x = list(
     data = data
-    ,metat = meta
+    ,meta = meta
   )
 
   # create widget
