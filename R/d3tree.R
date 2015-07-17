@@ -5,11 +5,11 @@
 #' @import htmlwidgets
 #'
 #' @export
-d3tree <- function(message, width = NULL, height = NULL) {
+d3tree <- function(data = NULL, width = NULL, height = NULL) {
 
   # forward options using x
   x = list(
-    message = message
+    data = data
   )
 
   # create widget
