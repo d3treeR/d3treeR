@@ -93,7 +93,7 @@ d3tree <- function(
   # accept JSON string
   if( inherits(data,c("character","connection")) ){
     data = jsonlite::toJSON(
-      jsonlite::fromJSON( pt )
+      jsonlite::fromJSON( data )
       , auto_unbox = TRUE
       , dataframe = "rows"
     )
