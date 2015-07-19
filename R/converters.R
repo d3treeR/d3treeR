@@ -41,5 +41,5 @@ convert_treemap <- function( treemap, rootname = "root" ){
   # set size = to vSize
   dt$Set( size = dt$Get("vSize") )
 
-  dt$ToList( unname = TRUE )
+  dt$ToList( unname = TRUE, mode = "explicit" )
 }
