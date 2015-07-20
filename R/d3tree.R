@@ -56,7 +56,7 @@
 #' ####
 #'
 #' #### also works with d3.js json
-#' library(d3tree)
+#' library(d3treeR)
 #' d3tree(
 #'   "http://bl.ocks.org/mbostock/raw/4063269/flare.json"
 #'   ,id = "name"
