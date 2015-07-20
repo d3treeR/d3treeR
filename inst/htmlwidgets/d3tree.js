@@ -14,374 +14,200 @@ HTMLWidgets.widget({
 
   renderValue: function(el, x, instance) {
 
-    // thanks Bill White for his treemap code on which this is based
-    //    http://www.billdwhite.com/wordpress/2012/12/16/d3-treemap-with-title-headers/
+    var valueField = x.options.value ? x.options.value : "size";
 
-    // set this as constant false instead of trying to detect browser type
-    //   but leave in case we need to revert back to detecting IE
-    var isIE = false;
+    // thanks Mike Bostock for all the code on which
+    //    this is based
+    var margin = {top: 20, right: 0, bottom: 0, left: 0},
+        width = 960,
+        height = 500 - margin.top - margin.bottom,
+        formatNumber = d3.format(",d"),
+        transitioning;
 
-    var chartWidth = el.getBoundingClientRect().width;
-    var chartHeight = el.getBoundingClientRect().height;
-    var xscale = d3.scale.linear().range([0, chartWidth]);
-    var yscale = d3.scale.linear().range([0, chartHeight]);
-    var color = d3.scale.category10();
-    var headerHeight = 20;
-    var headerColor = "#555555";
-    var transitionDuration = 500;
-    var root;
-    var node;
+    var xscale = d3.scale.linear()
+        .domain([0, width])
+        .range([0, width]);
+
+    var yscale = d3.scale.linear()
+        .domain([0, height])
+        .range([0, height]);
 
     var treemap = d3.layout.treemap()
+        .children(function(d, depth) { return depth ? null : d._children; })
+        .sort(function(a, b) { return a[valueField] - b[valueField]; })
+        .ratio(height / width * 0.5 * (1 + Math.sqrt(5)))
         .round(false)
-        .size([chartWidth, chartHeight])
-        .sticky(true)
         .value(function(d) {
-            return d.size;
+            return d[valueField];
         });
 
-    var svg = d3.select(el)
-        .append("svg:svg")
-        .attr("width", chartWidth)
-        .attr("height", chartHeight);
+    var svg = d3.select(el).append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.bottom + margin.top)
+        .style("margin-left", -margin.left + "px")
+        .style("margin.right", -margin.right + "px")
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .style("shape-rendering", "crispEdges");
 
-    var chart = svg.append("svg:g");
+    var grandparent = svg.append("g")
+        .attr("class", "grandparent");
 
-    var defs = svg.append("defs");
+    grandparent.append("rect")
+        .attr("y", -margin.top)
+        .attr("width", width)
+        .attr("height", margin.top);
 
-    var filter = defs.append("svg:filter")
-        .attr("id", "outerDropShadow")
-        .attr("x", "-20%")
-        .attr("y", "-20%")
-        .attr("width", "140%")
-        .attr("height", "140%");
-
-    filter.append("svg:feOffset")
-        .attr("result", "offOut")
-        .attr("in", "SourceGraphic")
-        .attr("dx", "1")
-        .attr("dy", "1");
-
-    filter.append("svg:feColorMatrix")
-        .attr("result", "matrixOut")
-        .attr("in", "offOut")
-        .attr("type", "matrix")
-        .attr("values", "1 0 0 0 0 0 0.1 0 0 0 0 0 0.1 0 0 0 0 0 .5 0");
-
-    filter.append("svg:feGaussianBlur")
-        .attr("result", "blurOut")
-        .attr("in", "matrixOut")
-        .attr("stdDeviation", "3");
-
-    filter.append("svg:feBlend")
-        .attr("in", "SourceGraphic")
-        .attr("in2", "blurOut")
-        .attr("mode", "normal");
-
-    drawTree( x.data, x.options.id, x.options.celltext );
+    grandparent.append("text")
+        .attr("x", 6)
+        .attr("y", 6 - margin.top)
+        .attr("dy", ".75em");
 
 
+    draw( x.data, valueField );
 
-    // set up a container for tasks to perform after completion
-    //  one example would be add callbacks for event handling
-    //  styling
-    if (!(typeof x.tasks === "undefined") ){
-      if ( (typeof x.tasks.length === "undefined") ||
-       (typeof x.tasks === "function" ) ) {
-         // handle a function not enclosed in array
-         // should be able to remove once using jsonlite
-         x.tasks = [x.tasks];
+    function draw(root, valueField) {
+      initialize(root);
+      accumulate(root);
+      layout(root);
+      display(root);
+
+      function initialize(root) {
+        root.x = root.y = 0;
+        root.dx = width;
+        root.dy = height;
+        root.depth = 0;
       }
-      x.tasks.map(function(t){
-        // for each tasks call the task with el supplied as `this`
-        t.call(el);
-      })
-    }
 
-    function drawTree( data, id, celltext ) {
-        id ? id : "id";
-        celltext ? celltext : "name";
-        node = root = data;
-        var nodes = treemap.nodes(root);
+      // Aggregate the values for internal nodes. This is normally done by the
+      // treemap layout, but not here because of our custom implementation.
+      // We also take a snapshot of the original children (_children) to avoid
+      // the children being overwritten when when layout is computed.
+      function accumulate(d) {
 
-        var children = nodes.filter(function(d) {
-            return !d.children;
-        });
-        var parents = nodes.filter(function(d) {
-            return d.children;
-        });
+        if( Array.isArray(d.children) ) {
+            return (d._children = d.children)
+              ? d[valueField] = d.children.reduce(function(p, v) { return p + accumulate(v); }, 0)
+              : d[valueField];
+      } else {
+        return d[valueField];
+      }
 
-        // create parent cells
-        var parentCells = chart.selectAll("g.cell.parent")
-            .data(parents, function(d) {
-                return "p-" + d[id];
-            });
-        var parentEnterTransition = parentCells.enter()
-            .append("g")
-            .attr("class", "cell parent")
-            .on("click", function(d) {
-                zoom(d, id, celltext);
-            })
-            .append("svg")
-            .attr("class", "clip")
-            .attr("width", function(d) {
-                return Math.max(0.01, d.dx);
-            })
-            .attr("height", headerHeight);
-        parentEnterTransition.append("rect")
-            .attr("width", function(d) {
-                return Math.max(0.01, d.dx);
-            })
-            .attr("height", headerHeight)
-            .style("fill", headerColor);
-        parentEnterTransition.append('text')
-            .attr("class", "label")
-            .attr("transform", "translate(3, 13)")
-            .attr("width", function(d) {
-                return Math.max(0.01, d.dx);
-            })
-            .attr("height", headerHeight)
-            .text(function(d) {
-                return d[celltext];
-            });
-        // update transition
-        var parentUpdateTransition = parentCells.transition().duration(transitionDuration);
-        parentUpdateTransition.select(".cell")
-            .attr("transform", function(d) {
-                return "translate(" + d.dx + "," + d.y + ")";
-            });
-        parentUpdateTransition.select("rect")
-            .attr("width", function(d) {
-                return Math.max(0.01, d.dx);
-            })
-            .attr("height", headerHeight)
-            .style("fill", headerColor);
-        parentUpdateTransition.select(".label")
-            .attr("transform", "translate(3, 13)")
-            .attr("width", function(d) {
-                return Math.max(0.01, d.dx);
-            })
-            .attr("height", headerHeight)
-            .text(function(d) {
-                return d[celltext];
-            });
-        // remove transition
-        parentCells.exit()
-            .remove();
+      }
 
-        // create children cells
-        var childrenCells = chart.selectAll("g.cell.child")
-            .data(children, function(d) {
-                return "c-" + d[id];
-            });
-        // enter transition
-        var childEnterTransition = childrenCells.enter()
-            .append("g")
-            .attr("class", "cell child")
-            .on("click", function(d) {
-                zoom(node === d.parent ? root : d.parent, id, celltext);
-            })
-            .on("mouseover", function() {
-                this.parentNode.appendChild(this); // workaround for bringing elements to the front (ie z-index)
-                d3.select(this)
-                    .attr("filter", "url(#outerDropShadow)")
-                    .select(".background")
-                    .style("stroke", "#000000");
-            })
-            .on("mouseout", function() {
-              d3.select(this)
-                    .attr("filter", "")
-                    .select(".background")
-                    .style("stroke", "#FFFFFF");
-            })
-            .append("svg")
-            .attr("class", "clip")
-        childEnterTransition.append("rect")
-            .classed("background", true)
-            .style("fill", function(d) {
-                return d.color ? d.color :  color(d.parent[id]);
-            });
-        childEnterTransition.append('text')
-            .attr("class", "label")
-            .attr('x', function(d) {
-                return d.dx / 2;
-            })
-            .attr('y', function(d) {
-                return d.dy / 2;
-            })
-            .attr("dy", ".35em")
-            .attr("text-anchor", "middle")
-            .style("display", "none")
-            .text(function(d) {
-                return d[celltext];
-            });
-        // update transition
-        var childUpdateTransition = childrenCells.transition().duration(transitionDuration);
-        childUpdateTransition.select(".cell")
-            .attr("transform", function(d) {
-                return "translate(" + d.x + "," + d.y + ")";
-            });
-        childUpdateTransition.select("rect")
-            .attr("width", function(d) {
-                return Math.max(0.01, d.dx);
-            })
-            .attr("height", function(d) {
-                return d.dy;
-            })
-            .style("fill", function(d) {
-                return d.color ? d.color : color(d.parent[id]);
-            });
-        childUpdateTransition.select(".label")
-            .attr('x', function(d) {
-                return d.dx / 2;
-            })
-            .attr('y', function(d) {
-                return d.dy / 2;
-            })
-            .attr("dy", ".35em")
-            .attr("text-anchor", "middle")
-            .style("display", "none")
-            .text(function(d) {
-                return d[celltext];
-            });
+      // Compute the treemap layout recursively such that each group of siblings
+      // uses the same size (1×1) rather than the dimensions of the parent cell.
+      // This optimizes the layout for the current zoom state. Note that a wrapper
+      // object is created for the parent node for each group of siblings so that
+      // the parent’s dimensions are not discarded as we recurse. Since each group
+      // of sibling was laid out in 1×1, we must rescale to fit using absolute
+      // coordinates. This lets us use a viewport to zoom.
+      function layout(d) {
+        if (d._children) {
+          treemap.nodes({_children: d._children});
+          d._children.forEach(function(c) {
+            c.x = d.x + c.x * d.dx;
+            c.y = d.y + c.y * d.dy;
+            c.dx *= d.dx;
+            c.dy *= d.dy;
+            c.parent = d;
+            layout(c);
+          });
+        }
+      }
 
-        // exit transition
-        childrenCells.exit()
-            .remove();
+      function display(d) {
+        grandparent
+            .datum(d.parent)
+            .on("click", transition)
+          .select("text")
+            .text(name(d));
 
-        d3.select("select").on("change", function() {
-            console.log("select zoom(node)");
-            treemap.value(this.value == "size" ? size : count)
-                .nodes(root);
-            zoom(node, id, celltext);
-        });
+        var g1 = svg.insert("g", ".grandparent")
+            .datum(d)
+            .attr("class", "depth");
 
-        zoom(node, id, celltext);
-    };
+        var g = g1.selectAll("g")
+            .data(d._children)
+          .enter().append("g");
 
+        g.filter(function(d) { return d._children; })
+            .classed("children", true)
+            .on("click", transition);
 
-    function size(d) {
-        return d.size;
-    }
+        g.selectAll(".child")
+            .data(function(d) { return d._children || [d]; })
+          .enter().append("rect")
+            .attr("class", "child")
+            .call(rect);
 
+        g.append("rect")
+            .attr("class", "parent")
+            .call(rect)
+          .append("title")
+            .text(function(d) { return formatNumber(d[valueField]); });
 
-    function count(d) {
-        return 1;
-    }
+        g.append("text")
+            .attr("dy", ".75em")
+            .text(function(d) { return d.name; })
+            .call(text);
 
+        function transition(d) {
+          if (transitioning || !d) return;
+          transitioning = true;
 
-    //and another one
-    function textHeight(d) {
-        var ky = chartHeight / d.dy;
-        yscale.domain([d.y, d.y + d.dy]);
-        return (ky * d.dy) / headerHeight;
-    }
+          var g2 = display(d),
+              t1 = g1.transition().duration(750),
+              t2 = g2.transition().duration(750);
 
-    function getRGBComponents(color) {
-        var r = color.substring(1, 3);
-        var g = color.substring(3, 5);
-        var b = color.substring(5, 7);
-        return {
-            R: parseInt(r, 16),
-            G: parseInt(g, 16),
-            B: parseInt(b, 16)
-        };
-    }
+          // Update the domain only after entering new elements.
+          xscale.domain([d.x, d.x + d.dx]);
+          yscale.domain([d.y, d.y + d.dy]);
 
+          // Enable anti-aliasing during the transition.
+          svg.style("shape-rendering", null);
 
-    function idealTextColor(bgColor) {
-        var nThreshold = 105;
-        var components = getRGBComponents(bgColor);
-        var bgDelta = (components.R * 0.299) + (components.G * 0.587) + (components.B * 0.114);
-        return ((255 - bgDelta) < nThreshold) ? "#000000" : "#ffffff";
-    }
+          // Draw child nodes on top of parent nodes.
+          svg.selectAll(".depth").sort(function(a, b) { return a.depth - b.depth; });
 
+          // Fade-in entering text.
+          g2.selectAll("text").style("fill-opacity", 0);
 
-    function zoom(d, id, celltext) {
-        id ? id : "id";
-        celltext ? celltext : "name";
-        treemap
-            .padding([headerHeight / (chartHeight / d.dy), 0, 0, 0])
-            .nodes(d);
+          // Transition to the new view.
+          t1.selectAll("text").call(text).style("fill-opacity", 0);
+          t2.selectAll("text").call(text).style("fill-opacity", 1);
+          t1.selectAll("rect").call(rect);
+          t2.selectAll("rect").call(rect);
 
-        // moving the next two lines above treemap layout messes up padding of zoom result
-        var kx = chartWidth / d.dx;
-        var ky = chartHeight / d.dy;
-        var level = d;
-
-        xscale.domain([d.x, d.x + d.dx]);
-        yscale.domain([d.y, d.y + d.dy]);
-
-        if (node != level) {
-            chart.selectAll(".cell.child .label")
-                .style("display", "none");
+          // Remove the old node when the transition is finished.
+          t1.remove().each("end", function() {
+            svg.style("shape-rendering", "crispEdges");
+            transitioning = false;
+          });
         }
 
-        var zoomTransition = chart.selectAll("g.cell").transition().duration(transitionDuration)
-            .attr("transform", function(d) {
-                return "translate(" + xscale(d.x) + "," + yscale(d.y) + ")";
-            })
-            .each("start", function() {
-                d3.select(this).select("label")
-                    .style("display", "none");
-            })
-            .each("end", function(d, i) {
-                if (!i && (level !== root)) {
-                    chart.selectAll(".cell.child")
-                        .filter(function(d) {
-                            return d.parent === node; // only get the children for selected group
-                        })
-                        .select(".label")
-                        .style("display", "")
-                        .style("fill", function(d) {
-                            return idealTextColor(d.color ? d.color : color(d.parent[id]));
-                        });
-                }
-            });
+        return g;
+      }
 
-        zoomTransition.select(".clip")
-            .attr("width", function(d) {
-                return Math.max(0.01, (kx * d.dx));
-            })
-            .attr("height", function(d) {
-                return d.children ? headerHeight : Math.max(0.01, (ky * d.dy));
-            });
+      function text(text) {
+        text.attr("x", function(d) { return xscale(d.x) + 6; })
+            .attr("y", function(d) { return yscale(d.y) + 6; });
+      }
 
-        zoomTransition.select(".label")
-            .attr("width", function(d) {
-                return Math.max(0.01, (kx * d.dx));
-            })
-            .attr("height", function(d) {
-                return d.children ? headerHeight : Math.max(0.01, (ky * d.dy));
-            })
-        .text(function(d) {
-                return d[celltext];
-            });
+      function rect(rect) {
+        rect.attr("x", function(d) { return xscale(d.x); })
+            .attr("y", function(d) { return yscale(d.y); })
+            .attr("width", function(d) { return xscale(d.x + d.dx) - xscale(d.x); })
+            .attr("height", function(d) { return yscale(d.y + d.dy) - yscale(d.y); });
+      }
 
-        zoomTransition.select(".child .label")
-            .attr("x", function(d) {
-                return kx * d.dx / 2;
-            })
-            .attr("y", function(d) {
-                return ky * d.dy / 2;
-            });
+      function name(d) {
+        return d.parent
+            ? name(d.parent) + "." + d.name
+            : d.name;
 
-        zoomTransition.select("rect")
-            .attr("width", function(d) {
-                return Math.max(0.01, (kx * d.dx));
-            })
-            .attr("height", function(d) {
-                return d.children ? headerHeight : Math.max(0.01, (ky * d.dy));
-            })
-            .style("fill", function(d) {
-                return d.children ? headerColor : ( d.color ? d.color : color(d.parent[id]) );
-            });
+      }
 
-        node = d;
-
-        if (d3.event) {
-            d3.event.stopPropagation();
-        }
     }
 
   },
