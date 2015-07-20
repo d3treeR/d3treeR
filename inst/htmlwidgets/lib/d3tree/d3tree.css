@@ -1,43 +1,43 @@
-svg {
-  background: #ddd;
-}
-
-text {
+.d3tree text {
   pointer-events: none;
 }
 
-.grandparent text {
+.d3tree .grandparent text {
   font-weight: bold;
 }
 
-rect {
-  fill: none;
+.d3tree rect {
+/*  fill: none; */
   stroke: #fff;
+  stroke-width: 1px;
 }
 
-rect.parent,
+.d3tree rect.parent,
 .grandparent rect {
   stroke-width: 2px;
 }
 
-.grandparent rect {
-  fill: orange;
+.d3tree .grandparent:hover rect {
+  fill: darkgrey;
 }
 
-.grandparent:hover rect {
-  fill: #ee9700;
-}
-
-.children rect.parent,
+.d3tree .children rect.parent,
 .grandparent rect {
   cursor: pointer;
 }
 
-.children rect.parent {
-  fill: #bbb;
-  fill-opacity: .5;
+.d3tree .children rect.child {
+  opacity: 0;
 }
 
-.children:hover rect.child {
-  fill: #bbb;
+.d3tree .children rect.parent {
+}
+
+.d3tree .children:hover rect.child {
+  opacity: 1;
+  stroke-width: 1px;
+}
+
+.d3tree .children:hover rect.parent {
+  opacity: 0;
 }

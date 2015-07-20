@@ -16,11 +16,14 @@ HTMLWidgets.widget({
 
     var valueField = x.options.value ? x.options.value : "size";
 
-    // thanks Mike Bostock for all the code on which
+    // thanks Mike Bostock and Zan Armstrong for all the code on which
     //    this is based
+    //  http://bost.ocks.org/mike/treemap/
+    //  https://gist.github.com/zanarmstrong/76d263bd36f312cb0f9f
+
     var margin = {top: 20, right: 0, bottom: 0, left: 0},
-        width = 960,
-        height = 500 - margin.top - margin.bottom,
+        width = el.getBoundingClientRect().width,
+        height = el.getBoundingClientRect().height - margin.top - margin.bottom,
         formatNumber = d3.format(",d"),
         transitioning;
 
@@ -31,6 +34,15 @@ HTMLWidgets.widget({
     var yscale = d3.scale.linear()
         .domain([0, height])
         .range([0, height]);
+
+    var color = d3.scale.category20();
+    color.range(
+      color.range().map(
+        function(d,i){
+          return (i==0) ? "#bbb" : d
+        }
+      )
+    );
 
     var treemap = d3.layout.treemap()
         .children(function(d, depth) { return depth ? null : d._children; })
@@ -64,9 +76,40 @@ HTMLWidgets.widget({
         .attr("dy", ".75em");
 
 
-    draw( x.data, valueField );
+    // determines if white or black will be better contrasting color
+    //  copied from
 
-    function draw(root, valueField) {
+    function getRGBComponents(color) {
+        return d3.rgb(color)
+    }
+
+    function idealTextColor(bgColor) {
+        var nThreshold = 105;
+        var components = getRGBComponents(bgColor);
+        var bgDelta = (components.r * 0.299) + (components.g * 0.587) + (components.b * 0.114);
+        return ((255 - bgDelta) < nThreshold) ? "#000000" : "#ffffff";
+    }
+
+    draw( x.data );
+
+    // set up a container for tasks to perform after completion
+    //  one example would be add callbacks for event handling
+    //  styling
+    if (!(typeof x.tasks === "undefined") ){
+      if ( (typeof x.tasks.length === "undefined") ||
+       (typeof x.tasks === "function" ) ) {
+         // handle a function not enclosed in array
+         // should be able to remove once using jsonlite
+         x.tasks = [x.tasks];
+      }
+      x.tasks.map(function(t){
+        // for each tasks call the task with el supplied as `this`
+        t.call(el);
+      })
+    }
+
+
+    function draw(root) {
       initialize(root);
       accumulate(root);
       layout(root);
@@ -89,9 +132,9 @@ HTMLWidgets.widget({
             return (d._children = d.children)
               ? d[valueField] = d.children.reduce(function(p, v) { return p + accumulate(v); }, 0)
               : d[valueField];
-      } else {
-        return d[valueField];
-      }
+        } else {
+          return d[valueField];
+        }
 
       }
 
@@ -118,10 +161,23 @@ HTMLWidgets.widget({
 
       function display(d) {
         grandparent
-            .datum(d.parent)
-            .on("click", transition)
+            .datum( d )
+            .on("click", function(d){
+              transition( (d.parent) ? d.parent: d );
+            } )
           .select("text")
-            .text(name(d));
+            .text(name(d))
+            .style("fill", function (d) {
+              return idealTextColor( d.color ? d.color : color(leveltwo(d).name) );
+            });
+
+        grandparent
+          .select("rect")
+            .style("fill",function(d){
+              return (d) ?
+                ( (d.color) ? d.color : color(leveltwo(d).name) ) :
+                "#bbb";
+            })
 
         var g1 = svg.insert("g", ".grandparent")
             .datum(d)
@@ -191,14 +247,24 @@ HTMLWidgets.widget({
 
       function text(text) {
         text.attr("x", function(d) { return xscale(d.x) + 6; })
-            .attr("y", function(d) { return yscale(d.y) + 6; });
+            .attr("y", function(d) { return yscale(d.y) + 6; })
+            .style("fill", function (d) {
+              return idealTextColor( d.color ? d.color : color(leveltwo(d).name) );
+            });
       }
 
       function rect(rect) {
         rect.attr("x", function(d) { return xscale(d.x); })
             .attr("y", function(d) { return yscale(d.y); })
             .attr("width", function(d) { return xscale(d.x + d.dx) - xscale(d.x); })
-            .attr("height", function(d) { return yscale(d.y + d.dy) - yscale(d.y); });
+            .attr("height", function(d) { return yscale(d.y + d.dy) - yscale(d.y); })
+            .style("fill", function(d){
+              return d.color ? d.color : color(leveltwo(d).name);
+            })
+            .style("stroke", function(d){
+              return idealTextColor( d.color ? d.color : color(leveltwo(d).name) );
+            })
+            ;
       }
 
       function name(d) {
@@ -206,6 +272,12 @@ HTMLWidgets.widget({
             ? name(d.parent) + "." + d.name
             : d.name;
 
+      }
+
+      function leveltwo(d){
+        return ( typeof d.parent !== "undefined" && d.parent.parent ) ?
+          leveltwo( d.parent ) :
+          d;
       }
 
     }
