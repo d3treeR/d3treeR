@@ -15,6 +15,7 @@ HTMLWidgets.widget({
   renderValue: function(el, x, instance) {
 
     var valueField = x.options.value ? x.options.value : "size";
+    var celltext = x.options.celltext ? x.options.celltext : "name";
 
     // thanks Mike Bostock and Zan Armstrong for all the code on which
     //    this is based
@@ -168,14 +169,14 @@ HTMLWidgets.widget({
           .select("text")
             .text(name(d))
             .style("fill", function (d) {
-              return idealTextColor( d.color ? d.color : color(leveltwo(d).name) );
+              return idealTextColor( d.color ? d.color : color(leveltwo(d)[celltext]) );
             });
 
         grandparent
           .select("rect")
             .style("fill",function(d){
               return (d) ?
-                ( (d.color) ? d.color : color(leveltwo(d).name) ) :
+                ( (d.color) ? d.color : color(leveltwo(d)[celltext]) ) :
                 "#bbb";
             })
 
@@ -205,7 +206,7 @@ HTMLWidgets.widget({
 
         g.append("text")
             .attr("dy", ".75em")
-            .text(function(d) { return d.name; })
+            .text(function(d) { return d[celltext]; })
             .call(text);
 
         function transition(d) {
@@ -249,7 +250,7 @@ HTMLWidgets.widget({
         text.attr("x", function(d) { return xscale(d.x) + 6; })
             .attr("y", function(d) { return yscale(d.y) + 6; })
             .style("fill", function (d) {
-              return idealTextColor( d.color ? d.color : color(leveltwo(d).name) );
+              return idealTextColor( d.color ? d.color : color(leveltwo(d)[celltext]) );
             });
       }
 
@@ -259,18 +260,18 @@ HTMLWidgets.widget({
             .attr("width", function(d) { return xscale(d.x + d.dx) - xscale(d.x); })
             .attr("height", function(d) { return yscale(d.y + d.dy) - yscale(d.y); })
             .style("fill", function(d){
-              return d.color ? d.color : color(leveltwo(d).name);
+              return d.color ? d.color : color(leveltwo(d)[celltext]);
             })
             .style("stroke", function(d){
-              return idealTextColor( d.color ? d.color : color(leveltwo(d).name) );
+              return idealTextColor( d.color ? d.color : color(leveltwo(d)[celltext]) );
             })
             ;
       }
 
       function name(d) {
         return d.parent
-            ? name(d.parent) + "." + d.name
-            : d.name;
+            ? name(d.parent) + "." + d[celltext]
+            : d[celltext];
 
       }
 

@@ -11,11 +11,10 @@
 #'           in the form of a \code{d3.js} hierarchy.
 #' @param rootname \code{character} for the name of the root if \code{data} is a
 #'           \code{treemap} object.
-#' @param id \code{character} of the name or id.  The default is \code{"id"}.  Often
-#'           \code{d3.js} hierarchies will use \code{"name"} instead of \code{"id"}.  We will use
-#'           \code{id} as the default to allow nodes with non-unique names.
 #' @param celltext \code{character} of the field that contains the title for each cell.  The
 #'           default is \code{"name"}.
+#' @param valueField \code{character} of the name of the field containing the value on which
+#'           you would like your treemap based.  The default is \code{"size"}.
 #' @param width,height a valid \code{CSS} size for the width and height of the container.
 #'           Percentage values work also by supplying as \code{character} such as \code{width = "100\%"}
 #'
@@ -69,7 +68,6 @@
 d3tree <- function(
               data = NULL
               , rootname = NULL
-              , id = "id"
               , celltext = "name"
               , width = NULL
               , height = NULL
@@ -108,8 +106,8 @@ d3tree <- function(
     data = data
     ,meta = meta
     ,options = list(
-      id = id
-      ,celltext = celltext
+      celltext = celltext
+      ,valueField = valueField
     )
   )
 

@@ -4,8 +4,8 @@
 \alias{d3tree}
 \title{Create an Interactive Treemap}
 \usage{
-d3tree(data = NULL, rootname = NULL, id = "id", celltext = "name",
-  width = NULL, height = NULL)
+d3tree(data = NULL, rootname = NULL, celltext = "name", width = NULL,
+  height = NULL)
 }
 \arguments{
 \item{data}{the data to be plotted as either
@@ -16,15 +16,14 @@ in the form of a \code{d3.js} hierarchy.}
 \item{rootname}{\code{character} for the name of the root if \code{data} is a
 \code{treemap} object.}
 
-\item{id}{\code{character} of the name or id.  The default is \code{"id"}.  Often
-\code{d3.js} hierarchies will use \code{"name"} instead of \code{"id"}.  We will use
-\code{id} as the default to allow nodes with non-unique names.}
-
 \item{celltext}{\code{character} of the field that contains the title for each cell.  The
 default is \code{"name"}.}
 
 \item{width,height}{a valid \code{CSS} size for the width and height of the container.
           Percentage values work also by supplying as \code{character} such as \code{width = "100\%"}}
+
+\item{valueField}{\code{character} of the name of the field containing the value on which
+you would like your treemap based.  The default is \code{"size"}.}
 }
 \description{
 \code{d3tree} is the primary function for creating interactive d3.js treemaps from
