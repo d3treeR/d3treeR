@@ -58,7 +58,7 @@
 #' library(d3treeR)
 #' d3tree(
 #'   "http://bl.ocks.org/mbostock/raw/4063269/flare.json"
-#'   ,id = "name"
+#'   , celltext = "name"
 #' )
 #' ####
 #'
@@ -69,6 +69,7 @@ d3tree <- function(
               data = NULL
               , rootname = NULL
               , celltext = "name"
+              , valueField = "size"
               , width = NULL
               , height = NULL
 ) {

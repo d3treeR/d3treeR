@@ -4,8 +4,8 @@
 \alias{d3tree}
 \title{Create an Interactive Treemap}
 \usage{
-d3tree(data = NULL, rootname = NULL, celltext = "name", width = NULL,
-  height = NULL)
+d3tree(data = NULL, rootname = NULL, celltext = "name",
+  valueField = "size", width = NULL, height = NULL)
 }
 \arguments{
 \item{data}{the data to be plotted as either
@@ -19,11 +19,11 @@ in the form of a \code{d3.js} hierarchy.}
 \item{celltext}{\code{character} of the field that contains the title for each cell.  The
 default is \code{"name"}.}
 
-\item{width,height}{a valid \code{CSS} size for the width and height of the container.
-          Percentage values work also by supplying as \code{character} such as \code{width = "100\%"}}
-
 \item{valueField}{\code{character} of the name of the field containing the value on which
 you would like your treemap based.  The default is \code{"size"}.}
+
+\item{width,height}{a valid \code{CSS} size for the width and height of the container.
+          Percentage values work also by supplying as \code{character} such as \code{width = "100\%"}}
 }
 \description{
 \code{d3tree} is the primary function for creating interactive d3.js treemaps from
@@ -71,7 +71,7 @@ d3tree(
 library(d3treeR)
 d3tree(
   "http://bl.ocks.org/mbostock/raw/4063269/flare.json"
-  ,id = "name"
+  , celltext = "name"
 )
 ####
 }
