@@ -1,3 +1,7 @@
+svg {
+  background: #ddd;
+}
+
 text {
   pointer-events: none;
 }
