@@ -11,6 +11,9 @@
 #'           in the form of a \code{d3.js} hierarchy.
 #' @param rootname \code{character} for the name of the root if \code{data} is a
 #'           \code{treemap} object.
+#' @param id \code{character} of the name or id.  The default is \code{"id"}.  Often
+#'           \code{d3.js} hierarchies will use \code{"name"} instead of \code{"id"}.  We will use
+#'           \code{id} as the default to allow nodes with non-unique names.
 #' @param celltext \code{character} of the field that contains the title for each cell.  The
 #'           default is \code{"name"}.
 #' @param valueField \code{character} of the name of the field containing the value on which
@@ -69,6 +72,7 @@ d3tree2 <- function(
   data = NULL
   , rootname = NULL
   , celltext = "name"
+  , id = "id"
   , valueField = "size"
   , width = NULL
   , height = NULL
@@ -111,6 +115,7 @@ d3tree2 <- function(
     ,legend = legend
     ,options = list(
       celltext = celltext
+      ,id = id
       ,valueField = valueField
     )
   )

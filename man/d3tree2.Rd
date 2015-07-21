@@ -4,7 +4,7 @@
 \alias{d3tree2}
 \title{Create an Interactive Treemap (Version 2)}
 \usage{
-d3tree2(data = NULL, rootname = NULL, celltext = "name",
+d3tree2(data = NULL, rootname = NULL, celltext = "name", id = "id",
   valueField = "size", width = NULL, height = NULL)
 }
 \arguments{
@@ -18,6 +18,10 @@ in the form of a \code{d3.js} hierarchy.}
 
 \item{celltext}{\code{character} of the field that contains the title for each cell.  The
 default is \code{"name"}.}
+
+\item{id}{\code{character} of the name or id.  The default is \code{"id"}.  Often
+\code{d3.js} hierarchies will use \code{"name"} instead of \code{"id"}.  We will use
+\code{id} as the default to allow nodes with non-unique names.}
 
 \item{valueField}{\code{character} of the name of the field containing the value on which
 you would like your treemap based.  The default is \code{"size"}.}
