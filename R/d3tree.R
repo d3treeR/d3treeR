@@ -75,6 +75,7 @@ d3tree <- function(
 ) {
 
   meta = NULL
+  legend = NULL
 
   # accept treemap
   if( inherits(data,"list" ) && names(data)[1] == "tm" ){
@@ -83,6 +84,7 @@ d3tree <- function(
       data$tm
       , ifelse(!is.null(rootname),rootname,deparse(substitute(data)))
     )
+    legend = extract_legend()
   }
 
   # accept data.frame
@@ -106,6 +108,7 @@ d3tree <- function(
   x = list(
     data = data
     ,meta = meta
+    ,legend = legend
     ,options = list(
       celltext = celltext
       ,valueField = valueField

@@ -22,11 +22,38 @@ HTMLWidgets.widget({
     //  http://bost.ocks.org/mike/treemap/
     //  https://gist.github.com/zanarmstrong/76d263bd36f312cb0f9f
 
-    var margin = {top: 20, right: 0, bottom: 0, left: 0},
+    var margin = {top: 20, right: 0, bottom: 20, left: 0},
         width = el.getBoundingClientRect().width,
         height = el.getBoundingClientRect().height - margin.top - margin.bottom,
         formatNumber = d3.format(",d"),
         transitioning;
+
+    var svg = d3.select(el).append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.bottom + margin.top)
+        .style("margin-left", -margin.left + "px")
+        .style("margin.right", -margin.right + "px")
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .style("shape-rendering", "crispEdges");
+
+    // experiment to add a legend if provided from treemap
+    if (x.legend){
+      var legend = svg.append("g")
+                      .attr("class","legend");
+
+      legend[0][0].innerHTML = x.legend.join(" ");
+
+      legend.attr(
+        "transform",
+        "translate(0," +
+                          (
+                            height + margin.top
+                          ) +
+        ") scale(1,-1)");
+
+      height = height - legend[0][0].getBoundingClientRect().height;
+    }
 
     var xscale = d3.scale.linear()
         .domain([0, width])
@@ -54,14 +81,6 @@ HTMLWidgets.widget({
             return d[valueField];
         });
 
-    var svg = d3.select(el).append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.bottom + margin.top)
-        .style("margin-left", -margin.left + "px")
-        .style("margin.right", -margin.right + "px")
-      .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-        .style("shape-rendering", "crispEdges");
 
     var grandparent = svg.append("g")
         .attr("class", "grandparent");
@@ -92,6 +111,7 @@ HTMLWidgets.widget({
     }
 
     draw( x.data );
+
 
     // set up a container for tasks to perform after completion
     //  one example would be add callbacks for event handling
