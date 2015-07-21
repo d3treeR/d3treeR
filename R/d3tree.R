@@ -16,6 +16,8 @@
 #'           \code{id} as the default to allow nodes with non-unique names.
 #' @param celltext \code{character} of the field that contains the title for each cell.  The
 #'           default is \code{"name"}.
+#' @param valueField \code{character} of the name of the field containing the value on which
+#'           you would like your treemap based.  The default is \code{"size"}.
 #' @param width,height a valid \code{CSS} size for the width and height of the container.
 #'           Percentage values work also by supplying as \code{character} such as \code{width = "100\%"}
 #'
@@ -71,11 +73,13 @@ d3tree <- function(
               , rootname = NULL
               , id = "id"
               , celltext = "name"
+              , valueField = "size"
               , width = NULL
               , height = NULL
 ) {
 
   meta = NULL
+  legend = NULL
 
   # accept treemap
   if( inherits(data,"list" ) && names(data)[1] == "tm" ){
@@ -84,6 +88,7 @@ d3tree <- function(
       data$tm
       , ifelse(!is.null(rootname),rootname,deparse(substitute(data)))
     )
+    legend = extract_legend()
   }
 
   # accept data.frame
@@ -110,6 +115,7 @@ d3tree <- function(
     ,options = list(
       id = id
       ,celltext = celltext
+      ,valueField = valueField
     )
   )
 

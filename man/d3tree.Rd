@@ -5,7 +5,7 @@
 \title{Create an Interactive Treemap}
 \usage{
 d3tree(data = NULL, rootname = NULL, id = "id", celltext = "name",
-  width = NULL, height = NULL)
+  valueField = "size", width = NULL, height = NULL)
 }
 \arguments{
 \item{data}{the data to be plotted as either
@@ -22,6 +22,9 @@ in the form of a \code{d3.js} hierarchy.}
 
 \item{celltext}{\code{character} of the field that contains the title for each cell.  The
 default is \code{"name"}.}
+
+\item{valueField}{\code{character} of the name of the field containing the value on which
+you would like your treemap based.  The default is \code{"size"}.}
 
 \item{width,height}{a valid \code{CSS} size for the width and height of the container.
           Percentage values work also by supplying as \code{character} such as \code{width = "100\%"}}
