@@ -28,9 +28,11 @@ License: MIT + file LICENSE
 LazyData: TRUE
 Imports:
   data.tree,
+  gridSVG,
   htmlwidgets,
   jsonlite,
-  treemap
+  treemap,
+  XML
 Suggests:
   knitr
 VignetteBuilder: knitr
