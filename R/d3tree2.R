@@ -1,6 +1,6 @@
-#' Create an Interactive Treemap (Version 1)
+#' Create an Interactive Treemap (Version 2)
 #'
-#' \code{d3tree} is the primary function for creating interactive d3.js treemaps from
+#' \code{d3tree2} is the primary function for creating interactive d3.js treemaps from
 #' various data types in R.  Easily use \code{\link[treemap]{treemap}} plots customized with
 #' \code{treemap}, or supply a \code{list} for a more typical \code{d3.js} experience, or
 #' blend the two.
@@ -29,7 +29,7 @@
 #'
 #' # example 1 from ?treemap
 #' data(GNI2010)
-#' d3tree(
+#' d3tree2(
 #'    treemap(
 #'      GNI2010
 #'      ,index=c("continent", "iso3")
@@ -45,7 +45,7 @@
 #' data(business)
 #' # Brewer's Red-White-Grey palette reversed with predefined range
 #' business$employees.growth <- business$employees - business$employees.prev
-#' d3tree(
+#' d3tree2(
 #'   treemap(business,
 #'        index=c("NACE1", "NACE2"),
 #'        vSize="employees",
@@ -58,24 +58,24 @@
 #' ####
 #'
 #' #### also works with d3.js json
-#' library(d3tree)
-#' d3tree(
+#' library(d3treeR)
+#' d3tree2(
 #'   "http://bl.ocks.org/mbostock/raw/4063269/flare.json"
-#'   ,id = "name"
+#'   , celltext = "name"
 #' )
 #' ####
 #'
 #' @importFrom jsonlite fromJSON toJSON
 #'
 #' @export
-d3tree <- function(
-              data = NULL
-              , rootname = NULL
-              , id = "id"
-              , celltext = "name"
-              , valueField = "size"
-              , width = NULL
-              , height = NULL
+d3tree2 <- function(
+  data = NULL
+  , rootname = NULL
+  , celltext = "name"
+  , id = "id"
+  , valueField = "size"
+  , width = NULL
+  , height = NULL
 ) {
 
   meta = NULL
@@ -112,34 +112,20 @@ d3tree <- function(
   x = list(
     data = data
     ,meta = meta
+    ,legend = legend
     ,options = list(
-      id = id
-      ,celltext = celltext
+      celltext = celltext
+      ,id = id
       ,valueField = valueField
     )
   )
 
   # create widget
   htmlwidgets::createWidget(
-    name = 'd3tree',
+    name = 'd3tree2',
     x,
     width = width,
     height = height,
     package = 'd3treeR'
   )
-}
-
-#' Widget output function for use in Shiny
-#'
-#' @export
-d3treeOutput <- function(outputId, width = '100%', height = '400px'){
-  shinyWidgetOutput(outputId, 'd3tree', width, height, package = 'd3treeR')
-}
-
-#' Widget render function for use in Shiny
-#'
-#' @export
-renderD3tree <- function(expr, env = parent.frame(), quoted = FALSE) {
-  if (!quoted) { expr <- substitute(expr) } # force quoted
-  shinyRenderWidget(expr, d3treeOutput, env, quoted = TRUE)
 }
