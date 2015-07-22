@@ -1,9 +1,11 @@
 .d3tree2 text {
   pointer-events: none;
+  font-size: 10px;
 }
 
 .d3tree2 .grandparent text {
   font-weight: bold;
+  font-size: inherit;
 }
 
 .d3tree2 rect {
@@ -31,6 +33,10 @@
 }
 
 .d3tree2 .children rect.parent {
+}
+
+.d3tree2 .children text{
+
 }
 
 .d3tree2 .children:hover rect.child {
