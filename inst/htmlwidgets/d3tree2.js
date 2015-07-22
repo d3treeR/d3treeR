@@ -44,13 +44,18 @@ HTMLWidgets.widget({
 
       legend[0][0].innerHTML = x.legend.join(" ");
 
+      // try to scale legend to fit width
+      var legendscale = Math.min(Math.round(
+          ((width-50)/legend[0][0].getBoundingClientRect().width)*100
+        ) / 100, 2)
+
       legend.attr(
         "transform",
         "translate(0," +
                           (
-                            height + margin.top
+                            height + margin.top + margin.bottom + 10
                           ) +
-        ") scale(1,-1)");
+        ") scale(" + legendscale + "," + -legendscale +")");
 
       height = height - legend[0][0].getBoundingClientRect().height;
     }
