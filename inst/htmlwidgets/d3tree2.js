@@ -47,13 +47,13 @@ HTMLWidgets.widget({
       // try to scale legend to fit width
       var legendscale = Math.min(Math.round(
           ((width-100)/legend[0][0].getBoundingClientRect().width)*100
-        ) / 100, 2)
+        ) / 100, 1.5)
 
       legend.attr(
         "transform",
         "translate(0," +
                           (
-                            height + margin.top + margin.bottom + 10
+                            height + margin.bottom
                           ) +
         ") scale(" + legendscale + "," + -legendscale +")");
 
