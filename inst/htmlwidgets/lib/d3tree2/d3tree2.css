@@ -8,6 +8,10 @@
   font-size: inherit;
 }
 
+.d3tree2 .legend text{
+  font-size: inherit;
+}
+
 .d3tree2 rect {
 /*  fill: none; */
   stroke: #fff;
