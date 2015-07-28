@@ -129,3 +129,19 @@ d3tree2 <- function(
     package = 'd3treeR'
   )
 }
+
+
+#' Widget output function for use in Shiny
+#'
+#' @export
+d3tree2Output <- function(outputId, width = '100%', height = '400px'){
+  shinyWidgetOutput(outputId, 'd3tree2', width, height, package = 'd3treeR')
+}
+
+#' Widget render function for use in Shiny
+#'
+#' @export
+renderD3tree2 <- function(expr, env = parent.frame(), quoted = FALSE) {
+  if (!quoted) { expr <- substitute(expr) } # force quoted
+  shinyRenderWidget(expr, d3tree2Output, env, quoted = TRUE)
+}

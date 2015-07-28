@@ -2,8 +2,10 @@
 
 export(d3tree)
 export(d3tree2)
+export(d3tree2Output)
 export(d3treeOutput)
 export(renderD3tree)
+export(renderD3tree2)
 import(data.tree)
 importFrom(XML,saveXML)
 importFrom(XML,xpathSApply)
