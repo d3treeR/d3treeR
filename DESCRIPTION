@@ -28,6 +28,7 @@ License: MIT + file LICENSE
 LazyData: TRUE
 Imports:
   data.tree,
+  grid,
   gridSVG,
   htmlwidgets,
   jsonlite,
