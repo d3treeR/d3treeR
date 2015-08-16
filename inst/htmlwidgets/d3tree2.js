@@ -273,6 +273,11 @@ HTMLWidgets.widget({
           Shiny.onInputChange(el.id + '_click', {name:d[celltext]})
         }
 
+        // check for additional clickAction to perform
+        if( x.options.clickAction && typeof x.options.clickAction === "function" ){
+          x.options.clickAction(d);
+        }
+
         return g;
       }
 

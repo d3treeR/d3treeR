@@ -5,7 +5,7 @@
 \title{Create an Interactive Treemap (Version 2)}
 \usage{
 d3tree2(data = NULL, rootname = NULL, celltext = "name", id = "id",
-  valueField = "size", width = NULL, height = NULL)
+  valueField = "size", clickAction = NULL, width = NULL, height = NULL)
 }
 \arguments{
 \item{data}{the data to be plotted as either
@@ -25,6 +25,11 @@ default is \code{"name"}.}
 
 \item{valueField}{\code{character} of the name of the field containing the value on which
 you would like your treemap based.  The default is \code{"size"}.}
+
+\item{clickAction}{\code{character} or \code{htmlwidgets::JS} to provide additional
+actions to perform when a tree node/cell is clicked.  The JavaScript function should
+expect one argument, which will be the \code{object} of the node clicked, so the form
+should look something like \code{function(d){ console.log(d) }}.}
 
 \item{width,height}{a valid \code{CSS} size for the width and height of the container.
           Percentage values work also by supplying as \code{character} such as \code{width = "100\%"}}

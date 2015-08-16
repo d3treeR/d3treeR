@@ -18,6 +18,10 @@
 #'           default is \code{"name"}.
 #' @param valueField \code{character} of the name of the field containing the value on which
 #'           you would like your treemap based.  The default is \code{"size"}.
+#' @param clickAction \code{character} or \code{htmlwidgets::JS} to provide additional
+#'           actions to perform when a tree node/cell is clicked.  The JavaScript function should
+#'           expect one argument, which will be the \code{object} of the node clicked, so the form
+#'           should look something like \code{function(d){ console.log(d) }}.
 #' @param width,height a valid \code{CSS} size for the width and height of the container.
 #'           Percentage values work also by supplying as \code{character} such as \code{width = "100\%"}
 #'
@@ -74,6 +78,7 @@ d3tree2 <- function(
   , celltext = "name"
   , id = "id"
   , valueField = "size"
+  , clickAction = NULL
   , width = NULL
   , height = NULL
 ) {
@@ -108,6 +113,11 @@ d3tree2 <- function(
   # accept list
   #  here we shouldn't need to do anything
 
+  # convert clickAction if character to htmlwidgets::JS
+  if(is.character(clickAction) && !inherits(clickAction,"JS_EVAL")){
+    clickAction <- htmlwidgets::JS(clickAction)
+  }
+
   # forward options using x
   x = list(
     data = data
@@ -117,6 +127,7 @@ d3tree2 <- function(
       celltext = celltext
       ,id = id
       ,valueField = valueField
+      ,clickAction = clickAction
     )
   )
 
