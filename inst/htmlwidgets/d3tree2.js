@@ -268,6 +268,11 @@ HTMLWidgets.widget({
           });
         }
 
+        // add a hook to Shiny
+        if( HTMLWidgets.shinyMode ){
+          Shiny.onInputChange(el.id + '_click', {name:d[celltext]})
+        }
+
         return g;
       }
 
