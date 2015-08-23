@@ -190,6 +190,7 @@ HTMLWidgets.widget({
             .datum( d )
             .on("click", function(d){
               transition( (d.parent) ? d.parent: d );
+              communicateClick( d.parent ? d.parent: d );
             } )
           .select("text")
             .text(name(d))
@@ -226,6 +227,9 @@ HTMLWidgets.widget({
         g.append("rect")
             .attr("class", "parent")
             .call(rect)
+            .on("click", function(d){
+              communicateClick(d);
+            })
           .append("title")
             .text(function(d) { return formatNumber(d[valueField]); });
 
@@ -268,6 +272,11 @@ HTMLWidgets.widget({
           });
         }
 
+        return g;
+      }
+
+      function communicateClick(d){
+
         // add a hook to Shiny
         if( HTMLWidgets.shinyMode ){
           Shiny.onInputChange(el.id + '_click', {name:d[celltext]})
@@ -278,8 +287,7 @@ HTMLWidgets.widget({
           x.options.clickAction(d);
         }
 
-        return g;
-      }
+      };
 
       function text(text) {
         text.attr("x", function(d) { return xscale(d.x) + 6; })
