@@ -40,14 +40,10 @@ HTMLWidgets.widget({
             return d.size;
         });
 
-    var graphic = d3.select(el)
+    var svg = d3.select(el)
         .append("svg:svg")
         .attr("width", chartWidth)
         .attr("height", chartHeight);
-    var svg = graphic
-        .append("svg:svg")
-        .attr("width", chartWidth)
-        .attr("height", chartHeight - 50);
 
     var chart = svg.append("svg:g");
 
@@ -83,7 +79,6 @@ HTMLWidgets.widget({
         .attr("mode", "normal");
 
     drawTree( x.data, x.options.id, x.options.celltext );
-    drawAxes( x.data );
 
 
 
@@ -102,11 +97,7 @@ HTMLWidgets.widget({
         t.call(el);
       })
     }
-    function drawAxes(data) {
-      var scale = d3.scale.linear().range([0, chartWidth]).domain([0, 500]);
-      var axis = d3.svg.axis().scale(scale).orient("bottom");
-      graphic.append('g').attr('transform', 'translate(0,' + (chartHeight - 50) + ')').call(axis);
-    }
+
     function drawTree( data, id, celltext ) {
         id ? id : "id";
         celltext ? celltext : "name";
