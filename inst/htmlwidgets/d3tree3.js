@@ -14,7 +14,7 @@ HTMLWidgets.widget({
 
   renderValue: function(el, x, instance) {
 
-    var format = d3.format(",.0f");
+    var format = d3.format(",.1f");
     var valueField = x.options.value ? x.options.value : "size";
     var celltext = x.options.celltext ? x.options.celltext : "name";
 
@@ -47,7 +47,7 @@ HTMLWidgets.widget({
 
       //Pulls colors out of DOM
       var colors = [];
-      var arrayOfRects = d3.select('g#legenda\\.1').select("g#GRID\\.rect\\.3\\.1").selectAll('rect')[0];
+      var arrayOfRects = d3.select('g#legenda\\.1').selectAll("g").selectAll('rect')[0];
       arrayOfRects.forEach(function(d) {
         colors.push(d.getAttribute("fill"));
       });
@@ -362,7 +362,7 @@ HTMLWidgets.widget({
 
       };
       function showSpan(d) {
-        if(scale){
+        if(scale && d.vColorValue){
 
           ciSpan.style('opacity', 1);
           triangle.attr('transform', 'translate(' + scale(d.vColorValue) + ',20)');

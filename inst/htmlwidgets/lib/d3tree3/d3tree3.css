@@ -1,6 +1,7 @@
 .d3tree3 text {
   pointer-events: none;
   font-size: 10px;
+  font-family: sans-serif;
 }
 
 .d3tree3 .grandparent text {
@@ -43,6 +44,9 @@
 }
 .d3tree3 .children:hover rect.parent {
   stroke-width: 9px;
+}
+.d3tree3 text.value-label {
+  font-size: 12px;
 }
 
 .d3tree3 .children text{
