@@ -45,14 +45,20 @@ HTMLWidgets.widget({
                       .attr("class","legend");
       legend[0][0].innerHTML = x.legend.join(" ");
 
-      //Pulls colors out of DOM
+      //Pulls colors out of DOM and constructs legend fade object
       var colors = [];
       var arrayOfRects = d3.select('g#legenda\\.1').selectAll("g").selectAll('rect')[0];
-      arrayOfRects.forEach(function(d) {
-        colors.push(d.getAttribute("fill"));
+      arrayOfRects.forEach(function(d, i) {
+        colors.push({
+           "offset" : (100 / (arrayOfRects.length - 1)) * i + "%",
+           "color" : d.getAttribute("fill")
+        });
       });
       //removes legend that we don't need anymore
       legend.remove();
+
+      //construct legend data object
+
 
       //Creates gradient for legend, assuming chunks of six
       svg.append("linearGradient")
@@ -61,15 +67,7 @@ HTMLWidgets.widget({
         .attr("x1", margin.left + (width/2)).attr("y1", 0)
         .attr("x2", width - margin.left).attr("y2", 0)
       .selectAll("stop")
-        .data([
-          {offset: "0%", color: colors[0]},
-          {offset: "17%", color: colors[1]},
-          {offset: "33%", color: colors[2]},
-          {offset: "50%", color: colors[3]},
-          {offset: "67%", color: colors[4]},
-          {offset: "83%", color: colors[5]},
-          {offset: "100%", color: colors[6]}
-        ])
+        .data(colors)
       .enter().append("stop")
         .attr("offset", function(d) { return d.offset; })
         .attr("stop-color", function(d) { return d.color; });
