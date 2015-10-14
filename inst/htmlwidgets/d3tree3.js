@@ -42,12 +42,12 @@ HTMLWidgets.widget({
     // experiment to add a legend if provided from treemap
     if (x.legend){
       var legend = svg.append("g")
-                      .attr("class","legend");
-      legend[0][0].innerHTML = x.legend.join(" ");
+                      .attr("class","legend")
+                      .html(x.legend.join(" "));
 
       //Pulls colors out of DOM and constructs legend fade object
       var colors = [];
-      var arrayOfRects = d3.select('g#legenda\\.1').selectAll("g").selectAll('rect')[0];
+      var arrayOfRects = legend.select('g#legenda\\.1').selectAll("g").selectAll('rect')[0];
       arrayOfRects.forEach(function(d, i) {
         colors.push({
            "offset" : (100 / (arrayOfRects.length - 1)) * i + "%",
