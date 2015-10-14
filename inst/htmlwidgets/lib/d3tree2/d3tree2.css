@@ -33,16 +33,10 @@
 }
 
 .d3tree2 .children rect.child {
-  opacity: 1;
-  stroke-width:0;
+  opacity: 0;
 }
 
 .d3tree2 .children rect.parent {
-  fill-opacity:0;
-  stroke-width: 2px;
-}
-.d3tree2 .children:hover rect.parent {
-  stroke-width: 9px;
 }
 
 .d3tree2 .children text{
@@ -50,9 +44,10 @@
 }
 
 .d3tree2 .children:hover rect.child {
-
+  opacity: 1;
+  stroke-width: 1px;
 }
 
 .d3tree2 .children:hover rect.parent {
-
+  opacity: 0;
 }
