@@ -15,6 +15,11 @@ Authors@R: c(
         , comment = "treemap code, http://www.billdwhite.com/wordpress/2012/12/16/d3-treemap-with-title-headers/"
       ),
       person(
+        "Lisa", "McCusker"
+        , role = "ctb"
+        , comment = "d3tree3 function and visualization"
+      ),
+      person(
         "Kent", "Russell"
         , role = c("aut", "cre")
         , comment = "R interface"
