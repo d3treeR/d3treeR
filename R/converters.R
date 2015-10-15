@@ -18,17 +18,25 @@ convert_treemap <- function( treemap, rootname = "root" ){
     }
   ),stringsAsFactors = F)
 
-  treemap$pathString <- apply(
-    treemap[,1:(attrPos-1)]
-    ,MARGIN = 1
-    ,function(row){
-      paste0(
-        c( rootname, row[which(!is.na(row))] )
-        ,sep = "/~>/" # assume this will not exist
-        ,collapse=""
-      )
-    }
-  )
+  if(attrPos > 2){
+    treemap$pathString <- apply(
+      treemap[,1:(attrPos-1)]
+      ,MARGIN = 1
+      ,function(row){
+        paste0(
+          c( rootname, row[which(!is.na(row))] )
+          ,sep = "/~>/" # assume this will not exist
+          ,collapse=""
+        )
+      }
+    )
+  } else {
+    treemap$pathString <- paste(
+      rootname
+      ,treemap[,1]
+      ,sep = "/~>/"
+    )
+  }
 
   dt <- as.Node(
     treemap[,-(1:(attrPos-1))]
