@@ -21,6 +21,10 @@ HTMLWidgets.widget({
     //   but leave in case we need to revert back to detecting IE
     var isIE = false;
 
+
+    // clear out contents in case of dynamic/Shiny situation
+    el.innerHTML = "";
+
     var chartWidth = el.getBoundingClientRect().width;
     var chartHeight = el.getBoundingClientRect().height;
     var xscale = d3.scale.linear().range([0, chartWidth]);
