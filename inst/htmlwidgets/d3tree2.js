@@ -14,6 +14,9 @@ HTMLWidgets.widget({
 
   renderValue: function(el, x, instance) {
 
+    //clear out el in case of dynamic/Shiny situation
+    el.innerHTML = "";
+
     var valueField = x.options.value ? x.options.value : "size";
     var celltext = x.options.celltext ? x.options.celltext : "name";
 
