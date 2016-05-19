@@ -19,6 +19,7 @@ HTMLWidgets.widget({
 
     var valueField = x.options.value ? x.options.value : "size";
     var celltext = x.options.celltext ? x.options.celltext : "name";
+    var cellid = x.options.id ? x.options.id : "id";
 
     // thanks Mike Bostock and Zan Armstrong for all the code on which
     //    this is based
@@ -282,7 +283,7 @@ HTMLWidgets.widget({
 
         // add a hook to Shiny
         if( HTMLWidgets.shinyMode ){
-          Shiny.onInputChange(el.id + '_click', {name:d[celltext]})
+          Shiny.onInputChange(el.id + '_click', {name:d[celltext],id:d[cellid]});
         }
 
         // check for additional clickAction to perform
