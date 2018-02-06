@@ -31,7 +31,7 @@ d3tree2(
 ```r
 library(d3treeR)
 d3tree2(
-  "http://bl.ocks.org/mbostock/raw/4063269/flare.json"
+  "http://bl.ocks.org/mbostock/raw/1093025/flare.json"
   , celltext = "name"
 )
 ```
